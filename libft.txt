@@ -1,0 +1,4 @@
+cat ft* | sed 's/\/\*.*$//g' | sed 's/#.*$//g' | sed 's/static.*$//g' | sed 's/{//g' | sed 's/}//g' | sed '/^$/d' | sed -e 's/^<tab>//g'
+
+-> 전체 코드 복사 후 libft.h에서 :%s/^	.*$//g'
+-> 저장 후 나와서 sed '/^$/d' libft.h
