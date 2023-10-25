@@ -29,6 +29,8 @@ typedef struct s_lst
 	char			save_buf[BUFFER_SIZE];
 	struct s_lst	*next;
 }	t_lst;
+
+t_lst	*ft_lstnew(int fd, const t_lst *head);
 #ifndef BUFFER_SIZE
 # define BUFFER_SIZE 1024
 #endif

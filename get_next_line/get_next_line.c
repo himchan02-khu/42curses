@@ -44,6 +44,7 @@ char	*get_next_line(int fd)
 		return (buf);
 		*/
 }
+
 /*
 
 #include <stdio.h>

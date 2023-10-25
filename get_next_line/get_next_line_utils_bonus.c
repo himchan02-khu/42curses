@@ -13,30 +13,6 @@
 #include "get_next_line_bonus.h"
 #include <stdio.h>
 
-int	ft_strlen(char const *arr)
-{
-	int	size;
-
-	size = 0;
-	while (arr[size] != 0)
-		size++;
-	return (size);
-}
-
-char	*ft_strncpy(char *dest, char *src, int n)
-{
-	int	count;
-
-	count = 0;
-	while (count < n && src[count] != '\0')
-	{
-		dest[count] = src[count];
-		count++;
-	}
-	dest[count] = src[count];
-	return (dest);
-}
-
 int	check_buf_newline(char *buf, char *save_buf, int *index, int buf_sz)
 {
 	while (*index < buf_sz && *(buf + *index) != 0)
@@ -70,19 +46,23 @@ char	*reallocate(char *buf, int *buf_sz, int new_buf_sz)
 	return (new_buf);
 }
 
-t_lst	*ft_lstnew(int fd)
+void	lst_pull(t_lst **head, int fd)
 {
-	struct s_lst	*lst;
+	t_lst *before;
 
-	lst = (t_lst *)malloc(sizeof(t_lst));
-	if (!lst)
+	before = (*head);
+	while (((*head))->file != fd)
 	{
-		free(lst);
-		return (NULL);
+		before = (*head);
+		(*head) = (*head)->next;
+		printf("fd : %d\n", before->file);
 	}
-	lst->next = NULL;
-	lst->file = fd;
-	return (lst);
+	if ((*head)->next != NULL)
+		before->next = (*head)->next;
+	else
+		before->next = NULL;
+	free((*head));
+	head = NULL;
 }
 
 char	*read_file(int fd)
@@ -95,29 +75,42 @@ char	*read_file(int fd)
 	struct s_lst		*ptr;
 
 	if (!head)
-		head = ft_lstnew(fd);
+		head = ft_lstnew(fd, head);
 	ptr = head;
 	while (ptr->next != NULL && ptr->file != fd)
 		ptr = ptr->next;
 	if (ptr->next == NULL && ptr->file != fd)
-		ptr = ft_lstnew(fd);
+		ptr = ft_lstnew(fd, head);
 	buf = malloc(sizeof(char) * ((int)BUFFER_SIZE + ft_strlen(ptr->save_buf)));
 	index = 0;
+	len = 1;
 	buf = ft_strncpy(buf, ptr->save_buf, ft_strlen(ptr->save_buf));
 	buf_sz = (int)BUFFER_SIZE + ft_strlen(ptr->save_buf);
 	if (check_buf_newline(buf, ptr->save_buf, &index, buf_sz) == 1)
 		return (buf);
-	while (buf)
+	while (buf && len != 0)
 	{
 		len = read(fd, buf + buf_sz - (int)BUFFER_SIZE, (int)BUFFER_SIZE);
-		if (check_buf_newline(buf, ptr->save_buf, &index, buf_sz) == 1)
+		if (len == 0) //endoffile = before -> next = now->next
+		{
+			lst_pull(&head, fd);
 			return (buf);
-		if (len <= 0)
+		}
+		if (check_buf_newline(buf, ptr->save_buf, &index, buf_sz) == 1)
+		{
+			if (len == 0) //endoffile = before -> next = now->next
+				lst_pull(&head, fd);
+			return (buf);
+		}
+		if (len <= 0 && len < BUFFER_SIZE)
 			break ;
 		buf = reallocate(buf, &buf_sz, (int)BUFFER_SIZE + buf_sz);
 	}
+	if (buf == NULL || len == 0)
+		lst_pull(&head, fd);
 	if (len < 0 || (index == 0 && *buf == 0))
 	{
+		lst_pull(&head, fd);
 		free(buf);
 		return (NULL);
 	}
