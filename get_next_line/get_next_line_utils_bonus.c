@@ -6,7 +6,7 @@
 /*   By: hchoo <hchoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/13 14:12:53 by hchoo             #+#    #+#             */
-/*   Updated: 2023/10/21 21:24:12 by hchoo            ###   ########.fr       */
+/*   Updated: 2023/11/03 13:26:54 by hchoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,23 +46,33 @@ char	*reallocate(char *buf, int *buf_sz, int new_buf_sz)
 	return (new_buf);
 }
 
-void	lst_pull(t_lst **head, int fd)
+char	*buf_alloc(char *buf, int index, int buf_sz, t_lst *ptr)
 {
-	t_lst *before;
+	int	len;
 
-	before = (*head);
-	while (((*head))->file != fd)
+	len = 1;
+	while (buf && len != 0)
 	{
-		before = (*head);
-		(*head) = (*head)->next;
-		printf("fd : %d\n", before->file);
+		len = read(ptr->file, buf + buf_sz - (int)BUFFER_SIZE, (int)BUFFER_SIZE);
+		if (check_buf_newline(buf, ptr->save_buf, &index, buf_sz) == 1)
+		{
+		//	if (len == 0) //endoffile = before -> next = now->next
+		//		lst_pull(ptr);
+			return (buf);
+		}
+		if (len <= 0 && len < BUFFER_SIZE)
+			break ;
+		buf = reallocate(buf, &buf_sz, (int)BUFFER_SIZE + buf_sz);
 	}
-	if ((*head)->next != NULL)
-		before->next = (*head)->next;
-	else
-		before->next = NULL;
-	free((*head));
-	head = NULL;
+//	if (len >= 0 && len < BUFFER_SIZE)
+	//	lst_pull(ptr);
+	if (len < 0 || (index == 0 && *buf == 0))
+	{
+		lst_pull(ptr);
+		free(buf);
+		return (NULL);
+	}
+	return (buf);
 }
 
 char	*read_file(int fd)
@@ -70,49 +80,33 @@ char	*read_file(int fd)
 	char	*buf;
 	int		buf_sz;
 	int		index;
-	int		len;
 	static struct s_lst	*head;
 	struct s_lst		*ptr;
 
 	if (!head)
-		head = ft_lstnew(fd, head);
+		head = ft_lstnew(fd, NULL);
 	ptr = head;
 	while (ptr->next != NULL && ptr->file != fd)
 		ptr = ptr->next;
-	if (ptr->next == NULL && ptr->file != fd)
-		ptr = ft_lstnew(fd, head);
+	if (ptr->next == NULL)
+		ptr->next = ft_lstnew(fd, head);
 	buf = malloc(sizeof(char) * ((int)BUFFER_SIZE + ft_strlen(ptr->save_buf)));
-	index = 0;
-	len = 1;
-	buf = ft_strncpy(buf, ptr->save_buf, ft_strlen(ptr->save_buf));
-	buf_sz = (int)BUFFER_SIZE + ft_strlen(ptr->save_buf);
-	if (check_buf_newline(buf, ptr->save_buf, &index, buf_sz) == 1)
-		return (buf);
-	while (buf && len != 0)
+	if (!buf)
 	{
-		len = read(fd, buf + buf_sz - (int)BUFFER_SIZE, (int)BUFFER_SIZE);
-		if (len == 0) //endoffile = before -> next = now->next
-		{
-			lst_pull(&head, fd);
-			return (buf);
-		}
-		if (check_buf_newline(buf, ptr->save_buf, &index, buf_sz) == 1)
-		{
-			if (len == 0) //endoffile = before -> next = now->next
-				lst_pull(&head, fd);
-			return (buf);
-		}
-		if (len <= 0 && len < BUFFER_SIZE)
-			break ;
-		buf = reallocate(buf, &buf_sz, (int)BUFFER_SIZE + buf_sz);
-	}
-	if (buf == NULL || len == 0)
-		lst_pull(&head, fd);
-	if (len < 0 || (index == 0 && *buf == 0))
-	{
-		lst_pull(&head, fd);
+		lst_pull(ptr);
 		free(buf);
 		return (NULL);
 	}
+	buf_sz = (int)BUFFER_SIZE + ft_strlen(ptr->save_buf);
+	str_clean(buf, buf_sz);
+	index = 0;
+	buf = ft_strncpy(buf, ptr->save_buf, ft_strlen(ptr->save_buf));
+	//buf_sz = (int)BUFFER_SIZE + ft_strlen(ptr->save_buf);
+	if (check_buf_newline(buf, ptr->save_buf, &index, buf_sz) == 1)
+		return (buf);
+	buf = buf_alloc(buf, index, buf_sz, ptr);
+//	printf("save_buf in fd %d : %s\n", ptr->file, ptr->save_buf);
+	if (*buf == 0)
+		lst_pull(ptr);
 	return (buf);
 }

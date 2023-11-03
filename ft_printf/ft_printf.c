@@ -6,13 +6,13 @@
 /*   By: hchoo <hchoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/11 17:54:00 by hchoo             #+#    #+#             */
-/*   Updated: 2023/10/11 18:15:41 by hchoo            ###   ########.fr       */
+/*   Updated: 2023/10/29 20:08:40 by hchoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "printf.h"
 
-static var_type(const char *arr)
+static int	var_type(const char *arr)
 {
 	arr++;
 	if (*arr == 'c')
@@ -37,19 +37,20 @@ static var_type(const char *arr)
 		return (0);
 }
 
-int	ft_printf(const char *arr)
+int	ft_printf(const char *arr, ...)
 {
+	char	*copy;
 	int	size;
 	int	arr_size;
-
 
 	size = 0;
 	arr_size = 0;
 	while (arr[size])
 		size++;
-
+	copy = (char *)malloc(sizeof(char) * (size + 1));
 	while (*arr)
 	{
+		copy[arr_size] = arr[arr_size];
 		if (*arr == '%')
 
 
