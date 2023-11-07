@@ -35,39 +35,26 @@ char	*reallocate(char *buf, int *buf_sz, int new_buf_sz)
 	return (new_buf);
 }
 
-char	*read_file(int fd)
+char	*clean_cpy(char *buf, char *save_buf, int buf_sz, int index)
 {
-	char	*buf;
-	static char	save_buf[BUFFER_SIZE + 1];
-	int		buf_sz;
-	int		index;
-	int		len;
+	ft_strncpy(save_buf, buf + index + 1, buf_sz - index - 1);
+	str_clean(buf + index + 1, buf_sz - index - 1);
+	return (buf);
+}
 
-	buf_sz = (int)BUFFER_SIZE + ft_strlen(save_buf);
-	buf = (char *)malloc(sizeof(char) * (buf_sz + 1));
-	if (!buf)
-	{
-		free(buf);
-		return (NULL);
-	}
+char	*alloc_buf(int fd, int buf_sz, char *save_buf, char *buf)
+{
+	int	index;
+	int	len;
+
 	index = 0;
-	buf = ft_strncpy(buf, save_buf, ft_strlen(save_buf));
-	str_clean(save_buf, (int)BUFFER_SIZE);
 	if (check_buf_newline(buf, &index, buf_sz) == 1)
-	{
-		ft_strncpy(save_buf, buf + index + 1, buf_sz - index - 1);
-		str_clean(buf + index + 1, buf_sz - index - 1);
-		return (buf);
-	}
+		return (clean_cpy(buf, save_buf, buf_sz, index));
 	while (buf)
 	{
 		len = read(fd, buf + buf_sz - (int)BUFFER_SIZE, (int)BUFFER_SIZE);
-		if (check_buf_newline(buf, &index, buf_sz - (int)BUFFER_SIZE + len) == 1)
-		{
-			ft_strncpy(save_buf, buf + index + 1, buf_sz - index - 1);
-			str_clean(buf + index + 1, buf_sz - index - 1);
-			return (buf);
-		}
+		if (check_buf_newline(buf, &index, buf_sz - (int)BUFFER_SIZE + len))
+			return (clean_cpy(buf, save_buf, buf_sz, index));
 		if (len <= 0)
 			break ;
 		buf = reallocate(buf, &buf_sz, (int)BUFFER_SIZE + buf_sz);

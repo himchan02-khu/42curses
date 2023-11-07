@@ -63,16 +63,26 @@ char	*ft_strncpy(char *dest, char *src, int n)
 
 char	*get_next_line(int fd)
 {
-	char	*buf;
+	static char	save_buf[BUFFER_SIZE + 1];
+	char		*buf;
+	int			buf_sz;
 
 	if (read(fd, 0, 0) == -1 || fd == -1)
 		return (NULL);
-	buf = read_file(fd);
+	buf_sz = (int)BUFFER_SIZE + ft_strlen(save_buf);
+	buf = (char *)malloc(sizeof(char) * (buf_sz + 1));
+	if (!buf)
+	{
+		free(buf);
+		return (NULL);
+	}
+	str_clean(buf, buf_sz);
+	buf = ft_strncpy(buf, save_buf, ft_strlen(save_buf));
+	str_clean(save_buf, (int)BUFFER_SIZE);
+	buf = alloc_buf(fd, buf_sz, save_buf, buf);
 	return (buf);
 }
-
 /*
-
 #include <stdio.h>
 #include <fcntl.h>
 int main()
@@ -94,7 +104,7 @@ int main()
 //	fd = open("42", O_RDWR);
 //	printf("main print buf : %s\n\n", get_next_line(fd));
 //	printf("%s\n\n", get_next_line(fd));
-	fd = open("e", O_RDWR);
+	fd = open("42_n", O_RDWR);
 //	fd = 100;
 	printf("main print buf : %s", get_next_line(fd));
 	printf("string : %s ||", get_next_line(fd));
