@@ -87,7 +87,7 @@ char	*get_next_line(int fd)
 
 	if (read(fd, 0, 0) == -1 || fd < 0)
 		return (NULL);
-	if (!head)
+	if (head == 0)
 		head = ft_lstnew(fd, head);
 	ptr = head;
 	while (ptr->next != NULL && ptr->file != fd)
@@ -108,10 +108,9 @@ char	*get_next_line(int fd)
 	buf = ft_strncpy(buf, ptr->save_buf, ft_strlen(ptr->save_buf));
 	str_clean(ptr->save_buf, (int)BUFFER_SIZE);
 	buf = alloc_buf(fd, buf_sz, ptr, buf);
-	printf("ptr : %p || head : %p \n", ptr, head);
 	return (buf);
 }
-
+/*
 
 #include <fcntl.h>
 int main()
@@ -174,4 +173,4 @@ int main()
 	//system("leaks a.out");
 			}
 
-
+*/

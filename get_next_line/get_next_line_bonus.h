@@ -37,7 +37,7 @@ typedef struct s_lst
 }	t_lst;
 
 t_lst	*ft_lstnew(int fd, const t_lst *head);
-void	lst_pull(t_lst **ptr);
+void	lst_pull(t_lst *ptr);
 char	*alloc_buf(int fd, int buf_sz, t_lst *ptr, char *buf);
 
 //first header static으로 선언 후 next next next... 하면서 일치하는 fd의 save_buf 가져오기

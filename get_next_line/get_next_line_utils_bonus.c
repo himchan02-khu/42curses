@@ -13,33 +13,39 @@
 #include "get_next_line_bonus.h"
 #include <stdio.h>
 
-void	lst_pull(t_lst **ptr)
+void	lst_pull(t_lst *ptr)
 {
 	t_lst *before;
 
-	if ((*ptr)->before == NULL)
+	if (ptr->before == NULL)
 	{
-		str_clean((*ptr)->save_buf, (int)BUFFER_SIZE);
-		(*ptr)->next = NULL;
-		(*ptr)->before = NULL;
-		free(*ptr);
-		ptr = 0;
+		close(ptr->file);
+		before = ptr;
+		if (ptr->next != NULL)
+			ptr = ptr->next;
+		else
+			ptr = 0;
+		str_clean(before->save_buf, (int)BUFFER_SIZE);
+		before->next = NULL;
+		before->before = NULL;
+		free(before);
 		return ;
 	}
 	else
-		before = (*ptr)->before;
-	if ((*ptr)->next != NULL)
+		before = ptr->before;
+	if (ptr->next != NULL)
 	{
-		before->next = (*ptr)->next;
-		((*ptr)->next)->before = before;
+		before->next = ptr->next;
+		(ptr->next)->before = before;
 	}
 	else
 		before->next = NULL;
-	str_clean((*ptr)->save_buf, (int)BUFFER_SIZE);
-	(*ptr)->next = NULL;
-	(*ptr)->before = NULL;
-	free(*ptr);
-	ptr = 0;
+	close(ptr->file);
+	str_clean(ptr->save_buf, (int)BUFFER_SIZE);
+	ptr->next = NULL;
+	ptr->before = NULL;
+	free(ptr);
+	//ptr = 0;
 }
 
 int	check_buf_newline(char *buf, int *index, int buf_sz)
@@ -61,8 +67,8 @@ char	*reallocate(char *buf, int *buf_sz, int new_buf_sz)
 	new_buf = malloc(sizeof(char) * (new_buf_sz));
 	if (new_buf)
 	{
+		str_clean(new_buf, new_buf_sz - 1);
 		ft_strncpy(new_buf, buf, *buf_sz);
-		str_clean(new_buf + *buf_sz, (int)BUFFER_SIZE - 1);
 		str_clean(buf, *buf_sz - 1);
 		*buf_sz = new_buf_sz;
 	}
@@ -102,11 +108,12 @@ char	*alloc_buf(int fd, int buf_sz, t_lst *ptr, char *buf)
 	}
 	if (len < 0 || (index == 0 && *buf == 0) || !buf)
 	{
-		lst_pull(&ptr);
-		free(buf);
+		lst_pull(ptr);
+		if (buf)
+			free(buf);
 		return (NULL);
 	}
-	else if(len >= 0 && len < (int)BUFFER_SIZE)
-		lst_pull(&ptr);
+	else if (len >= 0 && len < (int)BUFFER_SIZE)
+		lst_pull(ptr);
 	return (buf);
 }
