@@ -51,30 +51,6 @@ void	str_clean(char *buf, int size)
 	buf[index] = 0;
 }
 
-void	lst_pull(t_lst *ptr)
-{
-	t_lst *before;
-
-	if (ptr->before == NULL)
-	{
-		free(ptr);
-		ptr = NULL;
-		//ptr = ptr->next;
-		return ;
-	}
-	else
-		before = ptr->before;
-	if (ptr->next != NULL)
-	{
-		before->next = ptr->next;
-		(ptr->next)->before = before;
-	}
-	else
-		before->next = NULL;
-	//free(ptr);
-	ptr = NULL;
-}
-
 t_lst	*ft_lstnew(int fd, const t_lst *head)
 {
 	struct s_lst	*lst;
@@ -104,49 +80,98 @@ t_lst	*ft_lstnew(int fd, const t_lst *head)
 
 char	*get_next_line(int fd)
 {
-	char	*buf;
+	static struct s_lst	*head;
+	struct s_lst		*ptr;
+	char				*buf;
+	int					buf_sz;
 
-	if (fd == -1 || read(fd, 0, 0) == -1)
+	if (read(fd, 0, 0) == -1 || fd < 0)
 		return (NULL);
-	buf = read_file(fd);
+	if (!head)
+		head = ft_lstnew(fd, head);
+	ptr = head;
+	while (ptr->next != NULL && ptr->file != fd)
+		ptr = ptr->next;
+	if (ptr->next == NULL && ptr->file != fd)
+	{
+		ptr->next = ft_lstnew(fd, head);
+		ptr = ptr->next;
+	}
+	buf_sz = (int)BUFFER_SIZE + ft_strlen(ptr->save_buf);
+	buf = (char *)malloc(sizeof(char) * (buf_sz + 1));
+	if (!buf)
+	{
+		free(buf);
+		return (NULL);
+	}
+	str_clean(buf, buf_sz);
+	buf = ft_strncpy(buf, ptr->save_buf, ft_strlen(ptr->save_buf));
+	str_clean(ptr->save_buf, (int)BUFFER_SIZE);
+	buf = alloc_buf(fd, buf_sz, ptr, buf);
+	printf("ptr : %p || head : %p \n", ptr, head);
 	return (buf);
 }
+
 
 #include <fcntl.h>
 int main()
 {
 	int	fd;
-	char *buf = (char *) malloc (sizeof(char) * 1024);
 	char *receive;
 
-	fd = open("43", O_RDWR);
-	printf("%p\n", buf);
-	//free(buf);
-	printf("%p\n", buf);
-
-	receive = get_next_line(fd);
-	//printf("%zd", read(fd, buf, 1024));
-//	printf("main print buf : %s\n\n", get_next_line(fd));
-//	printf("%s\n\n", get_next_line(fd));
-//	fd = open("empty", O_RDWR);
-	printf("main print buf : %s\n\n", receive);
-	//free(receive);
-	receive = get_next_line(fd);
-	printf("%s\n\n", receive);
-	//free(receive);
-	receive = get_next_line(fd);
-	fd = open("big", O_RDWR);
-	printf("main print buf : %s\n\n", receive);
-	fd = open("big", O_RDWR);
-	//free(receive);
-	receive = get_next_line(fd);
-	printf("%s\n\n", receive);
-	//free(receive);
-	receive = get_next_line(fd);
-	printf("%s\n\n", receive);
+	fd = open("one_line_no_nl.txt", O_RDWR);
+//	fd = 100;
+	printf("main print buf : %s", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s", get_next_line(fd));
 	printf("%d\n", BUFFER_SIZE);
-	printf("%lu", sizeof(t_lst));
-	system("leaks a.out");
+	fd = open("alter", O_RDWR);
+	printf("fd (alter) : %d\n", fd);
+//	fd = 100;
+	printf("main print buf : %s", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s", get_next_line(fd));
+	printf("%d\n", BUFFER_SIZE);
+	fd = open("42_n", O_RDWR);
+	printf("fd (alter) : %d\n", fd);
+//	fd = 100;
+	printf("main print buf : %s", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	fd = open("43", O_RDWR);
+	printf("fd (alter) : %d\n", fd);
+//	fd = 100;
+	printf("main print buf : %s", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+
+	//system("leaks a.out");
 			}
 
 
