@@ -6,7 +6,7 @@
 /*   By: hchoo <hchoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 23:50:08 by hchoo             #+#    #+#             */
-/*   Updated: 2023/11/16 07:32:16 by hchoo            ###   ########.fr       */
+/*   Updated: 2023/11/16 08:07:35 by hchoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ char	*read_file(int fd);
 void	str_clean(char *buf, int size);
 
 # ifndef BUFFER_SIZE
-# define BUFFER_SIZE 1024
+#  define BUFFER_SIZE 1024
 # endif
 
 typedef struct s_lst
@@ -40,5 +40,4 @@ t_lst	*ft_lstnew(int fd, const t_lst *head);
 void	lst_pull(t_lst **ptr);
 char	*alloc_buf(int fd, int buf_sz, t_lst **ptr, char *buf);
 
-//first header static으로 선언 후 next next next... 하면서 일치하는 fd의 save_buf 가져오기
 #endif

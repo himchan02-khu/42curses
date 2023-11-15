@@ -6,7 +6,7 @@
 /*   By: hchoo <hchoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/13 14:07:53 by hchoo             #+#    #+#             */
-/*   Updated: 2023/11/03 14:01:20 by hchoo            ###   ########.fr       */
+/*   Updated: 2023/11/16 08:07:06 by hchoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define GET_NEXT_LINE_H
 
 # ifndef BUFFER_SIZE
-# define BUFFER_SIZE 1024
+#  define BUFFER_SIZE 1024
 # endif
 
 # include <stdlib.h>
