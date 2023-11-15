@@ -1,4 +1,4 @@
-main print buf : abcdefghijklmnopqrstuvwxyzstring : (null) ||string : (null) ||string : (null) ||string : (null) ||string : (null) ||string : (null) ||string : (null) ||string : (null) ||string : (null) ||string : (null) ||string : (null) ||string : (null) ||string : (null) ||string : (null)4
+main print buf : abcdefghijklmnopqrstuvwxyzstring : (null) ||string : (null) ||string : (null) ||string : (null) ||string : (null) ||string : (null) ||string : (null) ||string : (null) ||string : (null) ||string : (null) ||string : (null) ||string : (null) ||string : (null) ||string : (null)1
 fd (alter) : 3
 main print buf : 01234567890123456789012345678901234567890
 string : 
@@ -9,11 +9,13 @@ string :
  ||string : 987654321098765432109876543210987654321090
  ||string : 
  ||string : 01234567890123456789012345678901234567890
- ||string : (null) ||string : (null) ||string : (null) ||string : (null) ||string : (null) ||string : (null)4
+ ||string : (null) ||string : (null) ||string : (null) ||string : (null) ||string : (null) ||string : (null)1
 fd (alter) : 3
-main print buf : 0abcd56789!zxcv567890qwer567890uiop567890
-string : 1
- ||string : (null) ||string : (null) ||fd (alter) : 3
+main print buf : 01234567890123456789012345678901234567890
+string : 987654321098765432109876543210987654321098
+ ||string : 0123456789012345678901234567890123456789012
+ ||string : 987654321098765432109876543210987654321098
+ ||fd (alter) : 4
 main print buf : 0123456789asdfghjklqwertyuio01234567890123456789012345678901
 string : abcdefghi
  ||string : (null) ||string : (null) ||

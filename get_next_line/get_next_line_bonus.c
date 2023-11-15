@@ -6,7 +6,7 @@
 /*   By: hchoo <hchoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/13 14:07:26 by hchoo             #+#    #+#             */
-/*   Updated: 2023/11/03 13:28:44 by hchoo            ###   ########.fr       */
+/*   Updated: 2023/11/15 21:34:31 by hchoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ char	*get_next_line(int fd)
 	char				*buf;
 	int					buf_sz;
 
-	if (read(fd, 0, 0) == -1 || fd < 0)
+	if (read(fd, 0, 0) == -1 || fd < 0 || (int)BUFFER_SIZE < 0)
 		return (NULL);
 	if (head == 0)
 		head = ft_lstnew(fd, head);
@@ -107,16 +107,18 @@ char	*get_next_line(int fd)
 	str_clean(buf, buf_sz);
 	buf = ft_strncpy(buf, ptr->save_buf, ft_strlen(ptr->save_buf));
 	str_clean(ptr->save_buf, (int)BUFFER_SIZE);
-	buf = alloc_buf(fd, buf_sz, ptr, buf);
+	if (ptr == head)
+		buf = alloc_buf(fd, buf_sz, &head, buf);
+	else
+		buf = alloc_buf(fd, buf_sz, &ptr, buf);
 	return (buf);
 }
-/*
+
 
 #include <fcntl.h>
 int main()
 {
 	int	fd;
-	char *receive;
 
 	fd = open("one_line_no_nl.txt", O_RDWR);
 //	fd = 100;
@@ -155,7 +157,7 @@ int main()
 	printf("string : %s ||", get_next_line(fd));
 	printf("string : %s", get_next_line(fd));
 	printf("%d\n", BUFFER_SIZE);
-	fd = open("42_n", O_RDWR);
+	fd = open("mul_nl", O_RDWR);
 	printf("fd (alter) : %d\n", fd);
 //	fd = 100;
 	printf("main print buf : %s", get_next_line(fd));
@@ -173,4 +175,4 @@ int main()
 	//system("leaks a.out");
 			}
 
-*/
+

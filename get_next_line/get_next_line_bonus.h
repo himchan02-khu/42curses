@@ -6,7 +6,7 @@
 /*   By: hchoo <hchoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 23:50:08 by hchoo             #+#    #+#             */
-/*   Updated: 2023/11/03 15:28:42 by hchoo            ###   ########.fr       */
+/*   Updated: 2023/11/15 21:29:37 by hchoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,8 @@ typedef struct s_lst
 }	t_lst;
 
 t_lst	*ft_lstnew(int fd, const t_lst *head);
-void	lst_pull(t_lst *ptr);
-char	*alloc_buf(int fd, int buf_sz, t_lst *ptr, char *buf);
+void	lst_pull(t_lst **ptr);
+char	*alloc_buf(int fd, int buf_sz, t_lst **ptr, char *buf);
 
 //first header static으로 선언 후 next next next... 하면서 일치하는 fd의 save_buf 가져오기
 #endif
