@@ -6,7 +6,7 @@
 /*   By: hchoo <hchoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/13 14:12:53 by hchoo             #+#    #+#             */
-/*   Updated: 2023/11/15 21:47:34 by hchoo            ###   ########.fr       */
+/*   Updated: 2023/11/16 07:32:38 by hchoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ void	lst_pull(t_lst **ptr)
 
 	if ((*ptr)->before == NULL)
 	{
-		close((*ptr)->file);
 		before = (*ptr);
 		if ((*ptr)->next != NULL)
 			(*ptr) = (*ptr)->next;
@@ -40,12 +39,11 @@ void	lst_pull(t_lst **ptr)
 	}
 	else
 		before->next = NULL;
-	close((*ptr)->file);
 	str_clean((*ptr)->save_buf, (int)BUFFER_SIZE);
 	(*ptr)->next = NULL;
 	(*ptr)->before = NULL;
 	free((*ptr));
-	//(*ptr) = 0;
+	(*ptr) = 0;
 }
 
 int	check_buf_newline(char *buf, int *index, int buf_sz)
@@ -64,12 +62,15 @@ char	*reallocate(char *buf, int *buf_sz, int new_buf_sz)
 {
 	char	*new_buf;
 
-	new_buf = malloc(sizeof(char) * (new_buf_sz));
+	new_buf = malloc(sizeof(char) * (new_buf_sz) + 1);
 	if (new_buf)
 	{
-		str_clean(new_buf, new_buf_sz - 1);
-		ft_strncpy(new_buf, buf, *buf_sz);
-		str_clean(buf, *buf_sz - 1);
+		str_clean(new_buf, new_buf_sz);
+		if (*buf_sz < new_buf_sz)
+			ft_strncpy(new_buf, buf, *buf_sz);
+		else
+			ft_strncpy(new_buf, buf, new_buf_sz);
+		str_clean(buf, *buf_sz);
 		*buf_sz = new_buf_sz;
 	}
 	else
@@ -86,6 +87,7 @@ char	*clean_cpy(char *buf, char *save_buf, int buf_sz, int index)
 {
 	ft_strncpy(save_buf, buf + index + 1, buf_sz - index - 1);
 	str_clean(buf + index + 1, buf_sz - index - 1);
+	buf = reallocate(buf, &buf_sz, ft_strlen(buf));
 	return (buf);
 }
 
@@ -106,16 +108,18 @@ char	*alloc_buf(int fd, int buf_sz, t_lst **ptr, char *buf)
 			break ;
 		buf = reallocate(buf, &buf_sz, (int)BUFFER_SIZE + buf_sz);
 		if (!buf)
-			return (NULL);
+			return (lst_pull(ptr), NULL);
 	}
-	if (len < 0 || (index == 0 && *buf == 0) || !buf)
+	if (len < 0 || (index == 0 && *buf == 0))
 	{
 		lst_pull(ptr);
-		if (buf)
-			free(buf);
+		free(buf);
 		return (NULL);
 	}
 	else if (len >= 0 && len < (int)BUFFER_SIZE)
+	{
+		buf = reallocate(buf, &buf_sz, ft_strlen(buf));
 		lst_pull(ptr);
+	}
 	return (buf);
 }

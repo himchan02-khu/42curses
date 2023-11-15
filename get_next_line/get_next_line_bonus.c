@@ -6,7 +6,7 @@
 /*   By: hchoo <hchoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/13 14:07:26 by hchoo             #+#    #+#             */
-/*   Updated: 2023/11/15 21:34:31 by hchoo            ###   ########.fr       */
+/*   Updated: 2023/11/16 07:27:39 by hchoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,10 +58,7 @@ t_lst	*ft_lstnew(int fd, const t_lst *head)
 
 	lst = (t_lst *)malloc(sizeof(t_lst));
 	if (!lst)
-	{
-		free(lst);
 		return (NULL);
-	}
 	if (head)
 	{
 		ptr = (t_lst *)head;
@@ -86,24 +83,31 @@ char	*get_next_line(int fd)
 	int					buf_sz;
 
 	if (read(fd, 0, 0) == -1 || fd < 0 || (int)BUFFER_SIZE < 0)
+	{
+		if (head == 0)
+			return (NULL);
+		ptr = head;
+		while (ptr->next != NULL && ptr->file != fd)
+			ptr = ptr->next;
+		if (ptr->file == fd)
+			str_clean(ptr->save_buf, (int)BUFFER_SIZE);
 		return (NULL);
-	if (head == 0)
+	}
+	if (!head)
 		head = ft_lstnew(fd, head);
+	if (!head)
+		return (NULL);
 	ptr = head;
 	while (ptr->next != NULL && ptr->file != fd)
 		ptr = ptr->next;
 	if (ptr->next == NULL && ptr->file != fd)
-	{
 		ptr->next = ft_lstnew(fd, head);
+	if (ptr != head && ptr->file != fd)
 		ptr = ptr->next;
-	}
 	buf_sz = (int)BUFFER_SIZE + ft_strlen(ptr->save_buf);
 	buf = (char *)malloc(sizeof(char) * (buf_sz + 1));
 	if (!buf)
-	{
-		free(buf);
 		return (NULL);
-	}
 	str_clean(buf, buf_sz);
 	buf = ft_strncpy(buf, ptr->save_buf, ft_strlen(ptr->save_buf));
 	str_clean(ptr->save_buf, (int)BUFFER_SIZE);
@@ -113,7 +117,7 @@ char	*get_next_line(int fd)
 		buf = alloc_buf(fd, buf_sz, &ptr, buf);
 	return (buf);
 }
-
+/*
 
 #include <fcntl.h>
 int main()
@@ -146,22 +150,34 @@ int main()
 	printf("string : %s ||", get_next_line(fd));
 	printf("string : %s ||", get_next_line(fd));
 	printf("string : %s ||", get_next_line(fd));
-	printf("string : %s ||", get_next_line(fd));
-	printf("string : %s ||", get_next_line(fd));
-	printf("string : %s ||", get_next_line(fd));
-	printf("string : %s ||", get_next_line(fd));
-	printf("string : %s ||", get_next_line(fd));
-	printf("string : %s ||", get_next_line(fd));
-	printf("string : %s ||", get_next_line(fd));
-	printf("string : %s ||", get_next_line(fd));
-	printf("string : %s ||", get_next_line(fd));
 	printf("string : %s", get_next_line(fd));
 	printf("%d\n", BUFFER_SIZE);
+	fd = open("empty", O_RDWR);
+	printf("fd (alter) : %d\n", fd);
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	fd = open("1", O_RDWR);
+	printf("fd (alter) : %d\n", fd);
+	printf("string : %s ||", get_next_line(fd));
 	fd = open("mul_nl", O_RDWR);
 	printf("fd (alter) : %d\n", fd);
 //	fd = 100;
 	printf("main print buf : %s", get_next_line(fd));
 	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(4));
+	printf("string : %s ||", get_next_line(4));
+	fd = open("empty", O_RDWR);
+	printf("fd (alter) : %d\n", fd);
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(6));
+	printf("string : %s ||", get_next_line(6));
+	printf("string : %s ||", get_next_line(5));
+	printf("string : %s ||", get_next_line(4));
+	printf("string : %s ||", get_next_line(4));
 	printf("string : %s ||", get_next_line(fd));
 	printf("string : %s ||", get_next_line(fd));
 	fd = open("43", O_RDWR);
@@ -172,7 +188,7 @@ int main()
 	printf("string : %s ||", get_next_line(fd));
 	printf("string : %s ||", get_next_line(fd));
 
-	//system("leaks a.out");
+	system("leaks a.out");
 			}
 
-
+*/
