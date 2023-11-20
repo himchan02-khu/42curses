@@ -6,7 +6,6 @@ SRC = ft_printf.c \
 	  printf_int.c \
 	  printf_str.c
 OBJS= $(patsubst %.c, %.o, $(SRC))
-OBJS_BONUS= $(patsubst %.c, %.o, $(SRC_BONUS))
 AR = ar -cr
 
 all: $(NAME)

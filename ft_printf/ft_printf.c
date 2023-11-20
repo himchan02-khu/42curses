@@ -6,7 +6,7 @@
 /*   By: hchoo <hchoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/11 17:54:00 by hchoo             #+#    #+#             */
-/*   Updated: 2023/11/16 03:34:17 by hchoo            ###   ########.fr       */
+/*   Updated: 2023/11/20 12:12:35 by hchoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,14 +63,3 @@ int	ft_printf(const char *arr, ...)
 	va_end(args);
 	return (len);
 }
-/*
-
-int main()
-{
-	int len = 0;
-	static char *asdf = "asdf";
-	printf("%d : \n\n", ft_printf(" %s %s %s %s %s ", " - ", "", "4", "", "2 "));
-	printf("%d : ", printf(" %s %s %s %s %s ", " - ", "", "4", "", "2 "));
-	printf("%d : \n\n", ft_printf(" %s", ""));
-}
-*/

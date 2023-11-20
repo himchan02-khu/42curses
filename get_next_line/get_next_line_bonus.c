@@ -6,7 +6,7 @@
 /*   By: hchoo <hchoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/13 14:07:26 by hchoo             #+#    #+#             */
-/*   Updated: 2023/11/16 07:27:39 by hchoo            ###   ########.fr       */
+/*   Updated: 2023/11/20 18:01:55 by hchoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,25 +51,25 @@ void	str_clean(char *buf, int size)
 	buf[index] = 0;
 }
 
-t_lst	*ft_lstnew(int fd, const t_lst *head)
+t_lst	*ft_lstnew(int fd, t_lst **head)
 {
 	struct s_lst	*lst;
-	struct s_lst	*ptr;
 
 	lst = (t_lst *)malloc(sizeof(t_lst));
 	if (!lst)
-		return (NULL);
-	if (head)
 	{
-		ptr = (t_lst *)head;
-		while (ptr->next != NULL)
-			ptr = ptr->next;
-		lst->before = ptr;
-		ptr->next = lst;
+		free(lst);
+		return (NULL);
+	}
+	if ((*head))
+	{
+		lst->next = (*head);
+		(*head)->before = lst;
+		(*head) = lst;
 	}
 	else
-		lst->before = NULL;
-	lst->next = NULL;
+		lst->next = NULL;
+	lst->before = NULL;
 	lst->file = fd;
 	str_clean(lst->save_buf, (int)BUFFER_SIZE);
 	return (lst);
@@ -84,7 +84,7 @@ char	*get_next_line(int fd)
 
 	if (read(fd, 0, 0) == -1 || fd < 0 || (int)BUFFER_SIZE < 0)
 	{
-		if (head == 0)
+		if (!head)
 			return (NULL);
 		ptr = head;
 		while (ptr->next != NULL && ptr->file != fd)
@@ -94,16 +94,19 @@ char	*get_next_line(int fd)
 		return (NULL);
 	}
 	if (!head)
-		head = ft_lstnew(fd, head);
+		head = ft_lstnew(fd, &head);
 	if (!head)
 		return (NULL);
 	ptr = head;
 	while (ptr->next != NULL && ptr->file != fd)
 		ptr = ptr->next;
 	if (ptr->next == NULL && ptr->file != fd)
-		ptr->next = ft_lstnew(fd, head);
-	if (ptr != head && ptr->file != fd)
-		ptr = ptr->next;
+	{
+		head = ft_lstnew(fd, &head);
+		if (!head)
+			return (NULL);
+		ptr = head;
+	}
 	buf_sz = (int)BUFFER_SIZE + ft_strlen(ptr->save_buf);
 	buf = (char *)malloc(sizeof(char) * (buf_sz + 1));
 	if (!buf)
@@ -117,8 +120,8 @@ char	*get_next_line(int fd)
 		buf = alloc_buf(fd, buf_sz, &ptr, buf);
 	return (buf);
 }
-/*
 
+/*
 #include <fcntl.h>
 int main()
 {
@@ -128,19 +131,6 @@ int main()
 //	fd = 100;
 	printf("main print buf : %s", get_next_line(fd));
 	printf("string : %s ||", get_next_line(fd));
-	printf("string : %s ||", get_next_line(fd));
-	printf("string : %s ||", get_next_line(fd));
-	printf("string : %s ||", get_next_line(fd));
-	printf("string : %s ||", get_next_line(fd));
-	printf("string : %s ||", get_next_line(fd));
-	printf("string : %s ||", get_next_line(fd));
-	printf("string : %s ||", get_next_line(fd));
-	printf("string : %s ||", get_next_line(fd));
-	printf("string : %s ||", get_next_line(fd));
-	printf("string : %s ||", get_next_line(fd));
-	printf("string : %s ||", get_next_line(fd));
-	printf("string : %s ||", get_next_line(fd));
-	printf("string : %s", get_next_line(fd));
 	printf("%d\n", BUFFER_SIZE);
 	fd = open("alter", O_RDWR);
 	printf("fd (alter) : %d\n", fd);
@@ -157,6 +147,7 @@ int main()
 	printf("string : %s ||", get_next_line(fd));
 	printf("string : %s ||", get_next_line(fd));
 	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(3));
 	printf("string : %s ||", get_next_line(fd));
 	fd = open("1", O_RDWR);
 	printf("fd (alter) : %d\n", fd);
@@ -188,7 +179,7 @@ int main()
 	printf("string : %s ||", get_next_line(fd));
 	printf("string : %s ||", get_next_line(fd));
 
-	system("leaks a.out");
+	//system("leaks a.out");
 			}
 
 */
