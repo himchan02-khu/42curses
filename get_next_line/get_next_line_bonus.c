@@ -14,14 +14,28 @@
 
 #include <stdio.h>
 
-int	ft_strlen(char const *arr)
+int	strlen_clean(char *arr, int len)
 {
-	int	size;
+	int	index;
 
-	size = 0;
-	while (arr[size] != 0)
-		size++;
-	return (size);
+	if (len == -1)
+	{
+		index = 0;
+		while (arr[index] != 0)
+			index++;
+		return (index);
+	}
+	else
+	{
+		index = 0;
+		while (index < len)
+		{
+			arr[index] = 0;
+			index++;
+		}
+		arr[index] = 0;
+		return (0);
+	}
 }
 
 char	*ft_strncpy(char *dest, char *src, int n)
@@ -36,19 +50,6 @@ char	*ft_strncpy(char *dest, char *src, int n)
 	}
 	dest[count] = src[count];
 	return (dest);
-}
-
-void	str_clean(char *buf, int size)
-{
-	int	index;
-
-	index = 0;
-	while (index < size)
-	{
-		buf[index] = 0;
-		index++;
-	}
-	buf[index] = 0;
 }
 
 t_lst	*ft_lstnew(int fd, t_lst **head)
@@ -71,7 +72,7 @@ t_lst	*ft_lstnew(int fd, t_lst **head)
 		lst->next = NULL;
 	lst->before = NULL;
 	lst->file = fd;
-	str_clean(lst->save_buf, (int)BUFFER_SIZE);
+	strlen_clean(lst->save_buf, (int)BUFFER_SIZE);
 	return (lst);
 }
 
@@ -79,45 +80,44 @@ char	*get_next_line(int fd)
 {
 	static struct s_lst	*head;
 	struct s_lst		*ptr;
-	char				*buf;
-	int					buf_sz;
 
+	ptr = head;
+	if (head)
+		while (ptr->next != NULL && ptr->file != fd)
+			ptr = ptr->next;
 	if (read(fd, 0, 0) == -1 || fd < 0 || (int)BUFFER_SIZE < 0)
 	{
 		if (!head)
 			return (NULL);
-		ptr = head;
-		while (ptr->next != NULL && ptr->file != fd)
-			ptr = ptr->next;
-		if (ptr->file == fd)
-			str_clean(ptr->save_buf, (int)BUFFER_SIZE);
+		if (ptr->file == fd && (int)BUFFER_SIZE >= 0)
+			strlen_clean(ptr->save_buf, (int)BUFFER_SIZE);
 		return (NULL);
 	}
 	if (!head)
 		head = ft_lstnew(fd, &head);
+	else if (ptr->next == NULL && ptr->file != fd)
+		head = ft_lstnew(fd, &head);
 	if (!head)
 		return (NULL);
-	ptr = head;
-	while (ptr->next != NULL && ptr->file != fd)
-		ptr = ptr->next;
-	if (ptr->next == NULL && ptr->file != fd)
-	{
-		head = ft_lstnew(fd, &head);
-		if (!head)
-			return (NULL);
-		ptr = head;
-	}
-	buf_sz = (int)BUFFER_SIZE + ft_strlen(ptr->save_buf);
+	else if (head->file == fd)
+		return (pass_buf(fd, &head));
+	else
+		return (pass_buf(fd, &ptr));
+}
+
+char	*pass_buf(int fd, t_lst **ptr)
+{
+	int				buf_sz;
+	char			*buf;
+
+	buf_sz = (int)BUFFER_SIZE + strlen_clean((*ptr)->save_buf, -1);
 	buf = (char *)malloc(sizeof(char) * (buf_sz + 1));
 	if (!buf)
-		return (NULL);
-	str_clean(buf, buf_sz);
-	buf = ft_strncpy(buf, ptr->save_buf, ft_strlen(ptr->save_buf));
-	str_clean(ptr->save_buf, (int)BUFFER_SIZE);
-	if (ptr == head)
-		buf = alloc_buf(fd, buf_sz, &head, buf);
-	else
-		buf = alloc_buf(fd, buf_sz, &ptr, buf);
+		return (lst_pull(ptr), NULL);
+	strlen_clean(buf, buf_sz);
+	buf = ft_strncpy(buf, (*ptr)->save_buf, strlen_clean((*ptr)->save_buf, -1));
+	strlen_clean((*ptr)->save_buf, (int)BUFFER_SIZE);
+	buf = alloc_buf(fd, buf_sz, ptr, buf);
 	return (buf);
 }
 
@@ -160,8 +160,14 @@ int main()
 	printf("string : %s ||", get_next_line(fd));
 	printf("string : %s ||", get_next_line(4));
 	printf("string : %s ||", get_next_line(4));
-	fd = open("empty", O_RDWR);
+	fd = open("lines_around_10.txt", O_RDWR);
 	printf("fd (alter) : %d\n", fd);
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %s ||", get_next_line(fd));
+	printf("string : %p ||", get_next_line(fd));
 	printf("string : %s ||", get_next_line(fd));
 	printf("string : %s ||", get_next_line(fd));
 	printf("string : %s ||", get_next_line(6));

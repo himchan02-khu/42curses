@@ -19,6 +19,8 @@ void	lst_pull(t_lst **ptr)
 	t_lst	*before;
 
 	tmp = NULL;
+	if (!ptr)
+		return ;
 	before = (*ptr)->before;
 	if ((*ptr)->next && before != NULL)
 	{
@@ -29,7 +31,7 @@ void	lst_pull(t_lst **ptr)
 		tmp = (*ptr)->next;
 	else if (before)
 		before->next = NULL;
-	str_clean((*ptr)->save_buf, (int)BUFFER_SIZE);
+	strlen_clean((*ptr)->save_buf, (int)BUFFER_SIZE);
 	(*ptr)->next = NULL;
 	(*ptr)->before = NULL;
 	free((*ptr));
@@ -58,12 +60,12 @@ char	*reallocate(char *buf, int *buf_sz, int new_buf_sz)
 	new_buf = malloc(sizeof(char) * (new_buf_sz + 1));
 	if (new_buf)
 	{
-		str_clean(new_buf, new_buf_sz);
+		strlen_clean(new_buf, new_buf_sz);
 		if (*buf_sz < new_buf_sz)
 			ft_strncpy(new_buf, buf, *buf_sz);
 		else
 			ft_strncpy(new_buf, buf, new_buf_sz);
-		str_clean(buf, *buf_sz);
+		strlen_clean(buf, *buf_sz);
 		*buf_sz = new_buf_sz;
 	}
 	else
@@ -80,8 +82,8 @@ char	*reallocate(char *buf, int *buf_sz, int new_buf_sz)
 char	*clean_cpy(char *buf, char *save_buf, int buf_sz, int index)
 {
 	ft_strncpy(save_buf, buf + index + 1, buf_sz - index - 1);
-	str_clean(buf + index + 1, buf_sz - index - 1);
-	buf = reallocate(buf, &buf_sz, ft_strlen(buf));
+	strlen_clean(buf + index + 1, buf_sz - index - 1);
+	buf = reallocate(buf, &buf_sz, strlen_clean(buf, -1));
 	return (buf);
 }
 
@@ -109,6 +111,6 @@ char	*alloc_buf(int fd, int buf_sz, t_lst **ptr, char *buf)
 	if (len < 0 || (index == 0 && *buf == 0))
 		return (free(buf), NULL);
 	else if (len >= 0 && len < (int)BUFFER_SIZE)
-		buf = reallocate(buf, &buf_sz, ft_strlen(buf));
+		buf = reallocate(buf, &buf_sz, strlen_clean(buf, -1));
 	return (buf);
 }
