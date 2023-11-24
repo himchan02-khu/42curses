@@ -6,7 +6,7 @@
 /*   By: hchoo <hchoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/13 14:07:26 by hchoo             #+#    #+#             */
-/*   Updated: 2023/11/20 18:01:55 by hchoo            ###   ########.fr       */
+/*   Updated: 2023/11/24 17:18:46 by hchoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,10 +118,14 @@ char	*pass_buf(int fd, t_lst **ptr)
 	buf = ft_strncpy(buf, (*ptr)->save_buf, strlen_clean((*ptr)->save_buf, -1));
 	strlen_clean((*ptr)->save_buf, (int)BUFFER_SIZE);
 	buf = alloc_buf(fd, buf_sz, ptr, buf);
+	if (!buf)
+		return (lst_pull(ptr), NULL);
+	if (!*buf)
+		return (free(buf), NULL);
 	return (buf);
 }
-
 /*
+
 #include <fcntl.h>
 int main()
 {

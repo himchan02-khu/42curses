@@ -6,7 +6,7 @@
 /*   By: hchoo <hchoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/13 14:12:53 by hchoo             #+#    #+#             */
-/*   Updated: 2023/11/20 19:15:35 by hchoo            ###   ########.fr       */
+/*   Updated: 2023/11/24 17:29:55 by hchoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,19 +18,14 @@ void	lst_pull(t_lst **ptr)
 	t_lst	*tmp;
 	t_lst	*before;
 
-	tmp = NULL;
-	if (!ptr)
+	if (!(*ptr) || !ptr)
 		return ;
 	before = (*ptr)->before;
-	if ((*ptr)->next && before != NULL)
-	{
-		before->next = (*ptr)->next;
+	tmp = (*ptr)->next;
+	if ((*ptr)->next)
 		((*ptr)->next)->before = before;
-	}
-	else if ((*ptr)->next != NULL && !before)
-		tmp = (*ptr)->next;
-	else if (before)
-		before->next = NULL;
+	if (before)
+		before->next = tmp;
 	strlen_clean((*ptr)->save_buf, (int)BUFFER_SIZE);
 	(*ptr)->next = NULL;
 	(*ptr)->before = NULL;
@@ -84,6 +79,8 @@ char	*clean_cpy(char *buf, char *save_buf, int buf_sz, int index)
 	ft_strncpy(save_buf, buf + index + 1, buf_sz - index - 1);
 	strlen_clean(buf + index + 1, buf_sz - index - 1);
 	buf = reallocate(buf, &buf_sz, strlen_clean(buf, -1));
+	if (!buf)
+		return (NULL);
 	return (buf);
 }
 
@@ -109,7 +106,7 @@ char	*alloc_buf(int fd, int buf_sz, t_lst **ptr, char *buf)
 	if (len < (int)BUFFER_SIZE)
 		lst_pull(ptr);
 	if (len < 0 || (index == 0 && *buf == 0))
-		return (free(buf), NULL);
+		return (buf);
 	else if (len >= 0 && len < (int)BUFFER_SIZE)
 		buf = reallocate(buf, &buf_sz, strlen_clean(buf, -1));
 	return (buf);
