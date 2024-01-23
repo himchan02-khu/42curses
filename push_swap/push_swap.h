@@ -1,37 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_calloc.c                                        :+:      :+:    :+:   */
+/*   push_swap.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hchoo <hchoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/07 15:17:22 by hchoo             #+#    #+#             */
-/*   Updated: 2023/11/25 22:13:52 by hchoo            ###   ########.fr       */
+/*   Created: 2024/01/13 17:38:57 by hchoo             #+#    #+#             */
+/*   Updated: 2024/01/13 17:40:58 by hchoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#ifndef PUSH_SWAP_H
+# define PUSH_SWAP_H
 
-static void	ft_zero(void *ptr, size_t len)
-{
-	char	*save_ptr;
+# include <stdlib.h>
+# include <unistd.h>
 
-	save_ptr = (char *)ptr;
-	while (len--)
-		*save_ptr++ = 0;
-}
+typedef struct s_stack {
+	int value;
+	struct s_stack *next;
+} t_stack;
 
-void	*ft_calloc(size_t len, size_t size)
-{
-	void	*alloc;
-
-	if (size == 0 || len == 0)
-		len = 0;
-	else if (size > ~(size_t)0 / len)
-		return (NULL);
-	alloc = (void *)malloc(size * len);
-	if (!alloc)
-		return (NULL);
-	ft_zero(alloc, len * size);
-	return (alloc);
-}
+#endif

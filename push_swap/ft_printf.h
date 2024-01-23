@@ -1,37 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_calloc.c                                        :+:      :+:    :+:   */
+/*   ft_printf.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hchoo <hchoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/07 15:17:22 by hchoo             #+#    #+#             */
-/*   Updated: 2023/11/25 22:13:52 by hchoo            ###   ########.fr       */
+/*   Created: 2023/11/15 18:51:14 by hchoo             #+#    #+#             */
+/*   Updated: 2023/11/20 12:12:40 by hchoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#ifndef FT_PRINTF_H
+# define FT_PRINTF_H
 
-static void	ft_zero(void *ptr, size_t len)
-{
-	char	*save_ptr;
+# include <unistd.h>
+# include <stdarg.h>
 
-	save_ptr = (char *)ptr;
-	while (len--)
-		*save_ptr++ = 0;
-}
+int	ft_printf(const char *arr, ...);
+int	print_char(int val);
+int	print_str(char *ptr);
+int	print_address(void *ptr);
+int	print_int(int val);
+int	print_unsigned(int val);
+int	print_16(unsigned int val, int sign);
 
-void	*ft_calloc(size_t len, size_t size)
-{
-	void	*alloc;
-
-	if (size == 0 || len == 0)
-		len = 0;
-	else if (size > ~(size_t)0 / len)
-		return (NULL);
-	alloc = (void *)malloc(size * len);
-	if (!alloc)
-		return (NULL);
-	ft_zero(alloc, len * size);
-	return (alloc);
-}
+#endif
