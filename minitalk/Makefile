@@ -2,8 +2,10 @@ NAME = push_swap
 
 CC = cc
 CFLAG = -Wall -Wextra -Werror
-SRC = main.c \
-	  simple_arg.c
+SRC = ft_printf.c \
+	  printf_int.c \
+	  printf_str.c \
+	  main.c
 OBJS= $(patsubst %.c, %.o, $(SRC))
 #AR = ar -cr
 

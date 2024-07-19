@@ -1,9 +1,8 @@
-NAME = push_swap
+NAME = so_long
 
 CC = cc
 CFLAG = -Wall -Wextra -Werror
-SRC = main.c \
-	  simple_arg.c
+SRC = main.c
 OBJS= $(patsubst %.c, %.o, $(SRC))
 #AR = ar -cr
 

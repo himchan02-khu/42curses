@@ -1,29 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   push_swap.h                                        :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hchoo <hchoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/13 17:38:57 by hchoo             #+#    #+#             */
-/*   Updated: 2024/01/24 08:01:00 by hchoo            ###   ########.fr       */
+/*   Created: 2024/01/30 17:51:13 by hchoo             #+#    #+#             */
+/*   Updated: 2024/01/30 18:07:17 by hchoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PUSH_SWAP_H
-# define PUSH_SWAP_H
+#include "so_long.h"
 
-# include <stdlib.h>
-# include <unistd.h>
+int main(void)
+{
+	void *mlx_ptr;
+	void *win_ptr;
 
-typedef struct s_stack {
-	int				value;
-	struct s_stack	*next;
-}	t_stack;
-
-int	check_arg(int argc, char **argv, t_stack **stack_a);
-int	ft_atoi(char const *str);
-int	two_arg(char **argv);
-int	three_arg(char **argv);
-
-#endif
+	mlx_ptr = mlx_init();
+	win_ptr = mlx_new_window(mlx_ptr, 500, 500, "mlx 42");
+	mlx_loop(mlx_ptr);
+}
