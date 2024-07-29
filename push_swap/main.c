@@ -6,7 +6,7 @@
 /*   By: hchoo <hchoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 07:02:21 by hchoo             #+#    #+#             */
-/*   Updated: 2024/01/26 21:37:26 by hchoo            ###   ########.fr       */
+/*   Updated: 2024/07/28 23:03:18 by hchoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,24 @@ int	ft_atoi(char const *str)
 	return (save);
 }
 
+t_stack *alloc_stack(int value, t_stack *back, t_stack *front)
+{
+	t_stack	*alloc;
+
+	alloc = (t_stack *)malloc(sizeof(t_stack));
+	alloc->value = value;
+	if (front != NULL)
+		alloc->next = front;
+	else
+		alloc->next = NULL;
+	if (back != NULL)
+		alloc->prev = back;
+	else
+		alloc->prev = NULL;
+	return (alloc);
+}
+
+
 int	check_arg(int argc, char **argv, t_stack **stack_a)
 {
 	t_stack	*ptr;
@@ -49,10 +67,7 @@ int	check_arg(int argc, char **argv, t_stack **stack_a)
 
 	index = 1;
 	if (*stack_a == NULL)
-	{
-		(*stack_a) = (t_stack *)malloc(sizeof(t_stack));
-		(*stack_a)->value = ft_atoi(argv[index++]);
-	}
+		(*stack_a) = alloc_stack(ft_atoi(argv[index++]), 0, 0);
 	ptr = *stack_a;
 	while (index < argc)
 	{

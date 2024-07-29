@@ -6,11 +6,11 @@
 /*   By: hchoo <hchoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 17:51:13 by hchoo             #+#    #+#             */
-/*   Updated: 2024/01/30 18:07:17 by hchoo            ###   ########.fr       */
+/*   Updated: 2024/07/28 19:26:44 by hchoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "so_long.h"
+#include "mlx.h"
 
 int main(void)
 {

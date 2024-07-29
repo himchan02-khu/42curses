@@ -6,14 +6,14 @@
 /*   By: hchoo <hchoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 18:15:02 by hchoo             #+#    #+#             */
-/*   Updated: 2024/01/30 19:28:24 by hchoo            ###   ########.fr       */
+/*   Updated: 2024/07/19 22:39:15 by hchoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SO_LONG_H
 # define SO_LONG_H
 
-#include "./mlx/mlx.h"
+#include <mlx.h>
 #include <unistd.h>
 #include <stdlib.h>
 

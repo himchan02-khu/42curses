@@ -1,15 +1,15 @@
 NAME = so_long
 
 CC = cc
-CFLAG = -Wall -Wextra -Werror
+CFLAG = -Wall -Wextra -Werror -Imlx
+MLX_FLAGS = -Lmlx -lmlx -framework OpenGL -framework Appkit
 SRC = main.c
 OBJS= $(patsubst %.c, %.o, $(SRC))
-#AR = ar -cr
 
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAG) $(OBJS) -o $(NAME)
+	$(CC) $(CFLAG) $(OBJS) -o $(NAME) $(MLX_FLAGS)
 
 %.o:%.c
 	$(CC) $(CFLAG) -c $< -o $@
